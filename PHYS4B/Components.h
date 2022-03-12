@@ -2,39 +2,29 @@
 // Components of an electronic circuit including
 // Battery, Resistor, 
 
+#include <sstream>
+
 #ifndef Components_h
 #define Components_h
 
 class Component {
-
-};
-
-class Battery : public Component {
 public:
-  Battery() : _emf(0.0), _resistance(0.0), _voltage(0.0) {}
-  Battery(double emf) : _emf(emf), _resistance(0.0), _voltage(emf) {}
-  Battery(double emf, double res) : _emf(emf), _resistance(res) {
-    _voltage = emf / res;
-  }
-  Battery(double emf, double res, double volt)
-    : _emf(emf), _resistance(res), _voltage(volt) {}
+  Component(char type, int p_node, int n_node, double value)
+    : type_(type), positive_node_(p_node), negative_node_(n_node), value_(value) {}
+  ~Component() {}
+
+  std::string toString();
 private:
-  double _emf;
-  double _resistance;
-  double _voltage;
+  char type_;
+  int positive_node_;
+  int negative_node_;
+  double value_;
 };
 
-class Resistor : public Component {
-public:
-  Resistor() : _resistance(0.0), _voltage(0.0), _current(0.0), _power(0.0) {}
-  Resistor(double res, double volt, double current, double pwr)
-    : _resistance(res), _voltage(volt), _current(current), _power(pwr) {}
-  Resistor(double res)
-    : _resistance(res), _voltage(0.0), _current(0.0), _power(0.0) {}
-private:
-  double _resistance;
-  double _voltage;
-  double _current;
-  double _power;
-};
+std::string Component::toString() {
+  std::ostringstream oss;
+  oss << type_ << ' ' << positive_node_ << ' ' << negative_node_ << ' ' << value_;
+  return oss.str();
+}
+
 #endif // !Components_h

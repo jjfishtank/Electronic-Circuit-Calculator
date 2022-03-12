@@ -1,0 +1,11 @@
+V<name> <+> <-> <value> → independent voltage source
+I<name> <+> <-> <value> → independent current source
+R<name> <+> <-> <value> → resistor
+C<name> <+> <-> <value> → capacitor
+L<name> <+> <-> <value> → inductor
+
+X<name> is how we define the component type and its name
+
+<+> and <-> are the positive and negative terminals/nodes that the component is connected with. Those are strings
+
+<value> are the numerical values of the components in their corresponding units. Those are floating point numbers.
