@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Kirchoff.cpp">
+    <ClCompile Include="Kirchhoff.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
