@@ -9,15 +9,21 @@
 
 class Component {
 public:
-  Component(char type, int p_node, int n_node, double value)
+  Component(char type, std::string p_node, std::string n_node, double value)
     : type_(type), positive_node_(p_node), negative_node_(n_node), value_(value) {}
   ~Component() {}
 
   std::string toString();
+
+  char type() const { return type_; }
+  std::string p_node() const { return positive_node_; }
+  std::string n_node() const { return negative_node_; }
+  double value() const { return value_; }
+
 private:
   char type_;
-  int positive_node_;
-  int negative_node_;
+  std::string positive_node_;
+  std::string negative_node_;
   double value_;
 };
 

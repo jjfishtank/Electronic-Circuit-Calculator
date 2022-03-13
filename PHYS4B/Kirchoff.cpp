@@ -7,8 +7,20 @@ using namespace std;
 int main() {
   ifstream fin("circuit.txt");
   Circuit* circuit_1 = new Circuit(fin);
+  cout << "Circuit\n";
   cout << circuit_1->toString();
 
+  cout << "\nCircuit Info\n";
+  cout << "Component count: " << circuit_1->component_count() << endl;
+  cout << "Voltage count: " << circuit_1->voltage_count() << endl;
+  cout << "Current count: " << circuit_1->current_count() << endl;
+  cout << "Resistor count: " << circuit_1->resistor_count() << endl;
+  cout << "Node count: " << circuit_1->nodes_count() << endl;
+
+  cout << "\nNodes list:\n";
+  for (auto i : circuit_1->nodes()) {
+    cout << '\"' << i.first << "\" : " << i.second << endl;
+  }
 
 
 
