@@ -1,5 +1,7 @@
-// Jeremy Renati
-// Electronic Circuit Simulation
+// Jeremy Renati 2022
+// Electronic Circuit solver from parsed text file using
+// Modified Nodal Analysis (MNA) based on Kirchhoff's voltage and current laws
+// Circuit.h
 
 #include "Components.h"
 #include <eigen-3.4.0/Eigen/Dense>
@@ -7,7 +9,6 @@
 #include <vector>
 #include <fstream>
 #include <sstream>
-#include <iostream>
 
 #ifndef Circuit_h
 #define Circuit_h
@@ -17,8 +18,9 @@ public:
   Circuit(std::ifstream& fin);
   ~Circuit() {}
 
-  //Eigen::MatrixXd SolveCircuit();
-  std::string toString();
+  Eigen::MatrixXd SolveCircuit() const;
+  std::string string() const;
+  friend std::ostream& operator<< (std::ostream&, const Circuit&);
 
   size_t component_count() const { return components_.size(); }
   size_t voltage_count() const { return voltage_count_; }
@@ -28,32 +30,33 @@ public:
   Eigen::MatrixXd A_matrix() const { return A_; }
   Eigen::MatrixXd b_matrix() const { return b_; }
 
-  const std::unordered_map<std::string, size_t>& nodes() const { return nodes_; }
+  const std::unordered_map<std::string, int>& nodes() const { return nodes_; }
 
 private:
-
   void CalculateMatrices();
 
   std::vector<Component> components_;
-  std::unordered_map<std::string, size_t> nodes_;
-  size_t voltage_count_, current_count_, resistor_count_, conductor_count_, inductor_count_;
-  size_t matrix_size_;
+  std::unordered_map<std::string, int> nodes_;
+  size_t voltage_count_, current_count_, resistor_count_,
+         conductor_count_, inductor_count_;
+  // matrices for MNA
   Eigen::MatrixXd A_, b_;
 
 };
 
-// Parses circuit file and creates component vector
-Circuit::Circuit(std::ifstream& fin)
-  : voltage_count_(0), current_count_(0), resistor_count_(0)
-  , conductor_count_(0), inductor_count_(0), matrix_size_(0) {
+// Parses circuit file and creates component vector.
+// Maps node names to ints and calculates MNA matrices.
+Circuit::Circuit(std::ifstream& fin) :
+    voltage_count_(0), current_count_(0), resistor_count_(0),
+    conductor_count_(0), inductor_count_(0) {
 
   char type = 0;
-  size_t count = 0;
   std::string p_node, n_node;
   double value = 0.0;
   std::string buffer;
   std::istringstream istream;
 
+  // parse file to create components vector
   if (fin) {
     while (std::getline(fin, buffer, ' ')) {
       type = buffer.front();
@@ -105,39 +108,52 @@ Circuit::Circuit(std::ifstream& fin)
     nodes_.insert({ i.n_node() , nodes_.size() });
   }
 
-  // Populate A, b matrices for MNA linear system
+  // Calculate A, b matrices for MNA linear system
   CalculateMatrices();
 }
 
+// A matrix { G B }
+//          { C D }
+// b matrix { v } v = independent voltage sources
+//          { j } j = independent current sources
 void Circuit::CalculateMatrices() {
-  size_t g2_count = 0, g2_index = 0;
-  g2_count = voltage_count_ + inductor_count_;
-  matrix_size_ = nodes_.size() + g2_count - 1;
-  g2_index = matrix_size_ - g2_count;
+  int g2_count = 0, g2_index = 0, matrix_size = 0;
 
-  A_.resize(matrix_size_, matrix_size_);
+  // g2 refers to components with voltage values
+  g2_count = voltage_count_ + inductor_count_; // voltage sources
+  matrix_size = nodes_.size() + g2_count - 1;
+  g2_index = matrix_size - g2_count;
+
+  A_.resize(matrix_size, matrix_size);
   A_.fill(0.0);
-  b_.resize(1, matrix_size_);
+  b_.resize(matrix_size, 1);
   b_.fill(0.0);
 
   for (auto& i : components_) {
+    int p_node = 0, n_node = 0;
+
+    // retrieve mapped node ints
     auto search = nodes_.find(i.p_node());
-    size_t p_node = search->second;
+    p_node = search->second;
     search = nodes_.find(i.n_node());
-    size_t n_node = search->second;
+    n_node = search->second;
+
     double value = i.value();
 
+    // Modify matrix values for all components with respect to type
     switch (i.type()) {
       case 'C':
+        // Capacitor acts as open circuit in static calculation
         break;
       case 'I':
-        // signed currents in b matrix
+        // signed currents in b matrix, positive entering node, negative leaving node.
         if (p_node != 0)
           b_(p_node - 1) = b_(p_node - 1) - value;
         if (n_node != 0)
           b_(n_node - 1) = b_(n_node - 1) + value;
         break;
       case 'L':
+        // Inductor counts as wire in static calculation
         if (p_node != 0) {
           A_(p_node - 1, g2_index)++;
           A_(g2_index, p_node - 1)++;
@@ -147,6 +163,7 @@ void Circuit::CalculateMatrices() {
           A_(g2_index, n_node - 1)--;
         }
 
+        // 0 voltage
         b_(g2_index) = 0.0;
         g2_index++;
         break;
@@ -181,16 +198,27 @@ void Circuit::CalculateMatrices() {
   }
 }
 
-/*Eigen::MatrixXd Circuit::SolveCircuit() {
+// Linear system Ax = b
+// x = { v } unknown voltages of each node
+//     {...} unknown voltages of each node
+//     { i } unknown current through all V and L
+Eigen::MatrixXd Circuit::SolveCircuit() const {
+  Eigen::MatrixXd x = A_.colPivHouseholderQr().solve(b_);
+  return x;
+}
 
-}*/
-
-std::string Circuit::toString() {
-  std::string result;
+std::string Circuit::string() const {
+  std::ostringstream result;
+  result << "| Type | +node | -node | value |\n";
   for (size_t i = 0; i < components_.size(); i++) {
-    result = result + components_[i].toString() + '\n';
+    result << components_[i].string() + '\n';
   }
-  return result;
+  return result.str();
+}
+
+std::ostream& operator<< (std::ostream& os, const Circuit& c) {
+  os << c.string();
+  return os;
 }
 
 #endif // !Circuit_h

@@ -4,7 +4,6 @@
 #include "Circuit.h"
 #include <iostream>
 
-
 using namespace std;
 
 void ManualMeshAnalysis() {
@@ -82,7 +81,7 @@ void ManualNodalAnalysis() {
 
 
   cout << "Matrix A:\n" << A << endl;
-  cout << "Matrix B:\n" << B << endl;
+  cout << "Matrix b:\n" << B << endl;
 
   cout << "Computing System...\n" << endl;
   // Eigen linear solver
@@ -94,27 +93,29 @@ void ManualNodalAnalysis() {
 
 int main() {
   ifstream fin("circuit.txt");
+  cout << "Simulating Circuit...\n\n";
   Circuit* circuit_1 = new Circuit(fin);
   cout << "Circuit\n";
-  cout << circuit_1->toString();
+  cout << *circuit_1;
 
   cout << "\nCircuit Info\n";
   cout << "Component count: " << circuit_1->component_count() << endl;
   cout << "Voltage count: " << circuit_1->voltage_count() << endl;
   cout << "Current count: " << circuit_1->current_count() << endl;
   cout << "Resistor count: " << circuit_1->resistor_count() << endl;
-  cout << "Node count: " << circuit_1->nodes_count() << endl << endl;
-  cout << "Matrix A:\n" << circuit_1->A_matrix() << endl;
-  cout << "Matrix B:\n" << circuit_1->b_matrix() << endl;
-  
-  /*
-  cout << "\nNodes list:\n";
+  cout << "Node count: " << circuit_1->nodes_count() << endl;
+  cout << "\nNodes map:\n";
   for (auto i : circuit_1->nodes()) {
     cout << '\"' << i.first << "\" : " << i.second << endl;
   }
-  */
+  cout << "\n\nMatrix A:\n" << circuit_1->A_matrix() << endl;
+  cout << "Matrix b:\n" << circuit_1->b_matrix() << endl;
+  cout << "Solving system Ax = b ...\n\n";
+  Eigen::MatrixXd x = circuit_1->SolveCircuit();
+  cout << "Matrix x:\n" << x << endl;
 
-  /* manual nodal/mesh analysis
+
+  /*manual nodal / mesh analysis
   cout << endl;
   ManualMeshAnalysis();
   cout << endl;
