@@ -93,6 +93,10 @@ void ManualNodalAnalysis() {
 
 int main() {
   ifstream fin("circuit.txt");
+  if (fin.fail()) {
+    cout << "Failed to open circuit.txt\n";
+    return 1;
+  }
   cout << "Simulating Circuit...\n\n";
   Circuit* circuit_1 = new Circuit(fin);
   cout << "Circuit\n";
@@ -121,7 +125,7 @@ int main() {
   for (size_t i = 0; i < v_index; i++) {
     cout << "v" << i + 1 << " = " << x(i) << " Volts" << endl;
   }
-  for (size_t k = v_index, i = 0; k < x.size(); k++, i++) {
+  for (int k = v_index, i = 0; k < x.size(); k++, i++) {
     cout << "i" << i + 1 << " = " << x(k) << " Amps" << endl;
   }
 

@@ -15,15 +15,15 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Kirchhoff.cpp">
+    <ClCompile Include="src\Kirchhoff.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Circuit.h">
+    <ClInclude Include="include\Circuit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Components.h">
+    <ClInclude Include="include\Components.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
