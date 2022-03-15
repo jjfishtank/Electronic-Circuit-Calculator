@@ -8,6 +8,7 @@ Edit circuit.txt with desired circuit and run Kirchhoff.cpp through IDE or inclu
 ## Other
 
 Project time tracking: https://docs.google.com/spreadsheets/d/10E7upDxQze9qmZTiYQVscrKccSd6zURlfcb6_5i_z8M/edit?usp=sharing
+
 Presentation slides: https://docs.google.com/presentation/d/1YQ7WAGmtGQMcUSoDfyktb8Jq6eOVcT9BHwYMv2IYAmk/edit?usp=sharing
 
 Thanks to Eigen for Matrices and Linear algebra
