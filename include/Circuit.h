@@ -119,7 +119,7 @@ Circuit::Circuit(std::ifstream& fin) :
 // b matrix { v } v = independent voltage sources
 //          { j } j = independent current sources
 void Circuit::CalculateMatrices() {
-  int g2_count = 0, g2_index = 0, matrix_size = 0;
+  std::ptrdiff_t g2_count = 0, g2_index = 0, matrix_size = 0;
 
   // g2 refers to components with voltage values
   g2_count = voltage_count_ + inductor_count_; // voltage sources
@@ -132,7 +132,7 @@ void Circuit::CalculateMatrices() {
   b_.fill(0.0);
 
   for (auto& i : components_) {
-    int p_node = 0, n_node = 0;
+    std::ptrdiff_t p_node = 0, n_node = 0;
 
     // retrieve mapped node ints
     auto search = nodes_.find(i.p_node());

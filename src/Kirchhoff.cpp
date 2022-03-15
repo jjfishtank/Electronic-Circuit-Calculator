@@ -92,11 +92,14 @@ void ManualNodalAnalysis() {
 }
 
 int main() {
+  // read circuit file
   ifstream fin("circuit.txt");
   if (fin.fail()) {
     cout << "Failed to open circuit.txt\n";
     return 1;
-  }
+  } // stop program if file missing
+
+  // Create circuit simulation from file (see Circuit.h)
   cout << "Simulating Circuit...\n\n";
   Circuit* circuit_1 = new Circuit(fin);
   cout << "Circuit\n";
@@ -110,19 +113,24 @@ int main() {
   cout << "Conductor count: " << circuit_1->conductor_count() << endl;
   cout << "Inductor count: " << circuit_1->inductor_count() << endl;
   cout << "Node count: " << circuit_1->nodes_count() << endl;
+
   // << "\nNodes map:\n";
   //for (auto i : circuit_1->nodes()) {
   //  cout << '\"' << i.first << "\" : " << i.second << endl;
   //}
+
   cout << "\nMatrix A:\n" << circuit_1->A_matrix() << endl;
   cout << "Matrix b:\n" << circuit_1->b_matrix() << endl;
+
   cout << "Solving system Ax = b ...\n\n";
   Eigen::MatrixXd x = circuit_1->SolveCircuit();
+
   cout << "Matrix x:\n" << x << endl << endl;
+
   cout << "Solution:\n";
-  size_t v_sources = circuit_1->voltage_count() + circuit_1->inductor_count();
-  size_t v_index = x.size() - v_sources;
-  for (size_t i = 0; i < v_index; i++) {
+  int v_sources = static_cast<int>(circuit_1->voltage_count() + circuit_1->inductor_count());
+  int v_index = static_cast<int>(x.size()) - v_sources;
+  for (int i = 0; i < v_index; i++) {
     cout << "v" << i + 1 << " = " << x(i) << " Volts" << endl;
   }
   for (int k = v_index, i = 0; k < x.size(); k++, i++) {
