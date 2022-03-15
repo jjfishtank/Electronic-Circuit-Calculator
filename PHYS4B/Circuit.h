@@ -26,6 +26,8 @@ public:
   size_t voltage_count() const { return voltage_count_; }
   size_t current_count() const { return current_count_; }
   size_t resistor_count() const { return resistor_count_; }
+  size_t conductor_count() const { return conductor_count_; }
+  size_t inductor_count() const { return inductor_count_; }
   size_t nodes_count() const { return nodes_.size(); }
   Eigen::MatrixXd A_matrix() const { return A_; }
   Eigen::MatrixXd b_matrix() const { return b_; }

@@ -103,24 +103,35 @@ int main() {
   cout << "Voltage count: " << circuit_1->voltage_count() << endl;
   cout << "Current count: " << circuit_1->current_count() << endl;
   cout << "Resistor count: " << circuit_1->resistor_count() << endl;
+  cout << "Conductor count: " << circuit_1->conductor_count() << endl;
+  cout << "Inductor count: " << circuit_1->inductor_count() << endl;
   cout << "Node count: " << circuit_1->nodes_count() << endl;
-  cout << "\nNodes map:\n";
-  for (auto i : circuit_1->nodes()) {
-    cout << '\"' << i.first << "\" : " << i.second << endl;
-  }
-  cout << "\n\nMatrix A:\n" << circuit_1->A_matrix() << endl;
+  // << "\nNodes map:\n";
+  //for (auto i : circuit_1->nodes()) {
+  //  cout << '\"' << i.first << "\" : " << i.second << endl;
+  //}
+  cout << "\nMatrix A:\n" << circuit_1->A_matrix() << endl;
   cout << "Matrix b:\n" << circuit_1->b_matrix() << endl;
   cout << "Solving system Ax = b ...\n\n";
   Eigen::MatrixXd x = circuit_1->SolveCircuit();
-  cout << "Matrix x:\n" << x << endl;
+  cout << "Matrix x:\n" << x << endl << endl;
+  cout << "Solution:\n";
+  size_t v_sources = circuit_1->voltage_count() + circuit_1->inductor_count();
+  size_t v_index = x.size() - v_sources;
+  for (size_t i = 0; i < v_index; i++) {
+    cout << "v" << i + 1 << " = " << x(i) << " Volts" << endl;
+  }
+  for (size_t k = v_index, i = 0; k < x.size(); k++, i++) {
+    cout << "i" << i + 1 << " = " << x(k) << " Amps" << endl;
+  }
 
 
-  /*manual nodal / mesh analysis
-  cout << endl;
-  ManualMeshAnalysis();
-  cout << endl;
-  ManualNodalAnalysis();
-  */
+  //manual nodal / mesh analysis
+  //cout << endl;
+  //ManualMeshAnalysis();
+  //cout << endl;
+  //ManualNodalAnalysis();
+  
 
   return 0;
 }
