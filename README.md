@@ -12,4 +12,4 @@ Presentation slides: https://docs.google.com/presentation/d/1YQ7WAGmtGQMcUSoDfyk
 
 Thanks to Eigen for Matrices and Linear algebra
 
-Thanks to drifter1 for their excellent project and writeup https://github.com/drifter1/circuitsim
+Thanks to drifter1 for their excellent project and writeup: https://github.com/drifter1/circuitsim
